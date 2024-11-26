@@ -76,8 +76,8 @@ export async function updateReservations(updatedFields) {
   const bookingId = updatedFields.get("bookingId");
   const observations = updatedFields.get("observations");
   const updatedData = { numGuests, observations };
+
   if (!bookingId) {
-    console.error("Invalid params:", params);
     throw new Error("Booking ID is missing");
   }
   // Authencation
@@ -87,8 +87,8 @@ export async function updateReservations(updatedFields) {
   // Authrization
   const bookings = await getBookings(session.user.guestId);
   const bookingsID = bookings.map((booking) => booking.id);
-  if (!bookingsID.includes(id)) {
-    throw new Error("You are not allowed to delete this booking");
+  if (!bookingsID.includes(Number(bookingId))) {
+    throw new Error("You are not allowed to update this booking");
   }
   const { error } = await supabase
     .from("bookings")
