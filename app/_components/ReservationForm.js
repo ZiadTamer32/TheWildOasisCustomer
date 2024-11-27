@@ -68,7 +68,21 @@ function ReservationForm({ cabin, user }) {
           />
         </div>
 
-        <div className="flex justify-end items-center gap-6">
+        <div className="flex justify-between items-center gap-6">
+          <div className="flex items-center justify-center gap-2">
+            <input
+              type="checkbox"
+              className="h-6 w-6  accent-[#c69963] focus:ring focus:ring-[#c69963] focus:ring-offset-2"
+              name="hasBreakfast"
+              id="hasBreakfast"
+            />
+            <label
+              htmlFor="hasBreakfast"
+              className="text-primary-300 text-[18px]"
+            >
+              Do you want breakfast?
+            </label>
+          </div>
           {date ? (
             <p className="text-primary-300 text-base">
               Start by selecting dates

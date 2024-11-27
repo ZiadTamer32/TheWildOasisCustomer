@@ -32,6 +32,7 @@ export async function updateGuestProfile(formData) {
 
 export async function creatingBooking(bookingData, formData) {
   const session = await auth();
+  console.log(session);
   if (!session) throw new Error("You must be logged in");
   const newBooking = {
     ...bookingData,
@@ -41,7 +42,7 @@ export async function creatingBooking(bookingData, formData) {
     extrasPrice: 0,
     totalPrice: bookingData.cabinPrice,
     isPaid: false,
-    hasBreakfast: false,
+    hasBreakfast: Boolean(formData.get("hasBreakfast")),
     status: "unconfirmed"
   };
   const { error } = await supabase.from("bookings").insert([newBooking]);
@@ -75,7 +76,8 @@ export async function updateReservations(updatedFields) {
   const numGuests = updatedFields.get("numGuests");
   const bookingId = updatedFields.get("bookingId");
   const observations = updatedFields.get("observations");
-  const updatedData = { numGuests, observations };
+  const hasBreakfast = Boolean(updatedFields.get("hasBreakfast"));
+  const updatedData = { numGuests, observations, hasBreakfast };
 
   if (!bookingId) {
     throw new Error("Booking ID is missing");
