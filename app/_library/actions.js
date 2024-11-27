@@ -2,8 +2,9 @@
 import { auth, signIn, signOut } from "@/app/_library/auth";
 import { supabase } from "./supabase";
 import { revalidatePath } from "next/cache";
-import { getBookings } from "./data-service";
+import { getBookings, getSettings } from "./data-service";
 import { redirect } from "next/navigation";
+import { differenceInDays } from "date-fns";
 
 export async function updateGuestProfile(formData) {
   const session = await auth();
@@ -32,17 +33,21 @@ export async function updateGuestProfile(formData) {
 
 export async function creatingBooking(bookingData, formData) {
   const session = await auth();
-  console.log(session);
   if (!session) throw new Error("You must be logged in");
+
+  const needBreakfast = Boolean(formData.get("hasBreakfast"));
+  const breakfastToatlPrice =
+    +formData.get("breakfastToatlPrice") * Number(formData.get("numGuests"));
   const newBooking = {
     ...bookingData,
     guestId: session.user.guestId,
     numGuests: Number(formData.get("numGuests")),
     observations: formData.get("observations").slice(0, 1000),
-    extrasPrice: 0,
-    totalPrice: bookingData.cabinPrice,
+    extrasPrice: needBreakfast ? breakfastToatlPrice : 0,
+    totalPrice:
+      bookingData.cabinPrice + (needBreakfast ? breakfastToatlPrice : 0),
     isPaid: false,
-    hasBreakfast: Boolean(formData.get("hasBreakfast")),
+    hasBreakfast: needBreakfast,
     status: "unconfirmed"
   };
   const { error } = await supabase.from("bookings").insert([newBooking]);

@@ -4,13 +4,15 @@ import { useReservation } from "./ReservationContext";
 import { creatingBooking } from "../_library/actions";
 import SubmitButton from "./SubmitButton";
 
-function ReservationForm({ cabin, user }) {
+function ReservationForm({ cabin, user, settings }) {
   const { range, resetRange } = useReservation();
   const { id, maxCapacity, regularPrice, discount } = cabin;
+  const { breakfastPrice } = settings;
   const startDate = range?.from;
   const endDate = range?.to;
   const numNights = differenceInDays(endDate, startDate);
   const cabinPrice = numNights * (regularPrice - discount);
+  const breakfastToatlPrice = numNights * breakfastPrice;
   const bookingData = {
     startDate,
     endDate,
@@ -67,7 +69,12 @@ function ReservationForm({ cabin, user }) {
             placeholder="Any pets, allergies, special requirements, etc.?"
           />
         </div>
-
+        <input
+          type="hidden"
+          value={breakfastToatlPrice}
+          name="breakfastToatlPrice"
+          id="breakfastToatlPrice"
+        />
         <div className="flex justify-between items-center gap-6">
           <div className="flex items-center justify-center gap-2">
             <input
